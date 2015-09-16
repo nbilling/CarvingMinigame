@@ -41,8 +41,8 @@ public static class Triangulator
         int iLeftMost = 0;
         for (int i = 0; i < N; i++)
         {
-            int iPrev = Mod(i - 1, N);
-            int iNext = Mod(i + 1, N);
+            int iPrev = MathUtil.Mod(i - 1, N);
+            int iNext = MathUtil.Mod(i + 1, N);
 
             // Init polygon vertex
             vertices[i].Index = i;
@@ -197,11 +197,6 @@ public static class Triangulator
     private static bool IsReflex(bool isCcw, PolygonVertex v)
     {
         return isCcw ? v.WindingValue <= 0.0f : v.WindingValue >= 0.0f;
-    }
-
-    private static int Mod(int n, int m)
-    {
-        return ((n % m) + m) % m;
     }
 }
 

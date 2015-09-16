@@ -5,14 +5,28 @@ using UnityEngine;
 
 public class MeshCreator : MonoBehaviour
 {
+    private Vector3 _slicePlaneA = new Vector3(0.5f, 1f, 0f);
+    private Vector3 _slicePlaneB = new Vector3(0.5f, 1f, 1f);
+    private Vector3 _slicePlaneC = new Vector3(1.5f, 0f, 0f);
+
     void Start()
     {
+        // Create box
         Mesh mesh = CreateBoxMesh(3, 1, 1);
+
+        // Cut box
+        Plane cutPlane = new Plane(_slicePlaneA, _slicePlaneB, _slicePlaneC);
+        mesh = MeshCutter.CutMesh(mesh, cutPlane);
+
         GetComponent<MeshFilter>().mesh = mesh;
     }
 
-    public static Vector3[] newVertices;
-    public static int[] foo;
+    public void Update()
+    {
+        Debug.DrawLine(_slicePlaneA, _slicePlaneB, Color.red);
+        Debug.DrawLine(_slicePlaneB, _slicePlaneC, Color.red);
+        Debug.DrawLine(_slicePlaneC, _slicePlaneA, Color.red);
+    }
 
     private static Mesh CreateBoxMesh(int width, int height, int depth)
     {
@@ -27,7 +41,7 @@ public class MeshCreator : MonoBehaviour
         KeyValuePair<int, Vector3> g = new KeyValuePair<int, Vector3>(6, new Vector3(width, height, 0));
         KeyValuePair<int, Vector3> h = new KeyValuePair<int, Vector3>(7, new Vector3(width, height, depth));
 
-        newVertices = new Vector3[]
+        Vector3[] newVertices = new Vector3[]
                 { a.Value, b.Value, c.Value, d.Value, e.Value, f.Value, g.Value, h.Value };
 
         // List of faces, order of vertices in each face must form a simple polygon.
@@ -41,13 +55,13 @@ public class MeshCreator : MonoBehaviour
                 new KeyValuePair<int, Vector3>[] { e, g, h, f }
             };
 
-        IEnumerable<int> triangles = faces.SelectMany<KeyValuePair <int, Vector3>[], int>(GetFaceTriangles);
+        IEnumerable<int> newTriangles = faces.SelectMany<KeyValuePair <int, Vector3>[], int>(GetFaceTriangles);
 
         Vector2[] newUV = null;
 
         mesh.vertices = newVertices;
         mesh.uv = newUV;
-        mesh.triangles = triangles.ToArray();
+        mesh.triangles = newTriangles.ToArray();
 
         return mesh;
     }

@@ -4,9 +4,9 @@ using System.Collections;
 public class CutPlane : MonoBehaviour
 {
     // 3d points for plane
-    public Vector3 triA = new Vector3(1, 2, -1);
-    public Vector3 triB = new Vector3(3, -4, 4);
-    public Vector3 triC = new Vector3(-2, -1, -3);
+    public Vector3 triA = new Vector3(0.5f, 1f, 0f);//(1, 2, -1);
+    public Vector3 triB = new Vector3(0.5f, 1f, 1f);//(3, -4, 4);
+    public Vector3 triC = new Vector3(1.5f, 0f, 0f);//(-2, -1, -3);
 
     public Vector2 recA2D = new Vector2(1, 1);
     public Vector2 recB2D = new Vector2(1, -1);
@@ -52,11 +52,6 @@ public class CutPlane : MonoBehaviour
         _recB = transformation.From2DTo3D(recB2D);
         _recC = transformation.From2DTo3D(recC2D);
         _recD = transformation.From2DTo3D(recD2D);
-    }
-
-    private static Vector3 Translate2DTo3D(Vector3 planeOrigin, Vector3 xAxis, Vector3 yAxis, Vector2 p)
-    {
-        return planeOrigin + (p.x * xAxis) + (p.y * yAxis);
     }
 
     void Update()

@@ -10,16 +10,19 @@ public class Transformation
     private Vector3 _xAxis;
     private Vector3 _yAxis;
 
-    public Transformation(Vector3 a, Vector3 b, Vector3 c)
+    public Transformation(Plane plane)
     {
-        Plane plane = new Plane(a, b, c);
-
         // Normal faces towards you when you can read vertices clockwise!!!
         _planeOrigin = Mathf.Abs(plane.distance) * plane.normal;
 
         _xAxis = GetOrthogonal(plane.normal).normalized;
         //_xAxis = (a - _planeOrigin).normalized; // TODO: use a more robust algorithm to pick this vector. This will break if triA is also the plane origin.
         _yAxis = Vector3.Cross(plane.normal, _xAxis).normalized;
+    }
+
+    public Transformation(Vector3 a, Vector3 b, Vector3 c)
+        : this(new Plane(a, b, c))
+    {
     }
 
     public Vector2 From3DTo2D(Vector3 p)
