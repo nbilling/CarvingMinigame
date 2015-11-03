@@ -6,7 +6,6 @@ public class PolygonCreator3D
 {
     private PolygonCreator _polygonCreator = new PolygonCreator();
     private Transformation _transformation;
-    private Vector3[] _initialBuffer;
 
     public PolygonCreator3D(Plane plane)
     {

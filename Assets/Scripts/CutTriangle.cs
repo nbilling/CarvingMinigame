@@ -19,6 +19,7 @@ using UnityEngine;
 
 internal class CutTriangle
 {
+    private static float TriangleAreaEpsilon = MathUtil.TriangleArea(0.01f, 0.01f, 0.01f);
     public IEnumerable<Vector3> TrianglesAfterCut
     {
         get;
@@ -131,19 +132,35 @@ internal class CutTriangle
             // Cut quadrilateral into two triangles: (PANP, SANP, PRP) and (SANP, SRP, PRP).
             // Importantly, these triangles are guaranteed to have the same direction (CW vs. CCW) as the original triangle.
 
-            TrianglesAfterCut = new Vector3[]
-                {
-                    // Top-left half of quad from diagram
-                    predecessorAdjacentNewPoint, successorAdjacentNewPoint, predecessorRemainingPoint.P,
-                    // Bottom-right half of quad from diagram
-                    successorAdjacentNewPoint, successorRemainingPoint.P, predecessorRemainingPoint.P
-                };
+            IList<Vector3> trianglesAfterCut = new List<Vector3>();
+
+            // Top-left half of quad from diagram
+            // If area of triangle smaller than epsilon then don't bother rendering it.
+            if (MathUtil.TriangleArea(predecessorAdjacentNewPoint, successorAdjacentNewPoint,
+                predecessorRemainingPoint.P) > TriangleAreaEpsilon)
+            {
+                trianglesAfterCut.Add(predecessorAdjacentNewPoint);
+                trianglesAfterCut.Add(successorAdjacentNewPoint);
+                trianglesAfterCut.Add(predecessorRemainingPoint.P);
+            }
+
+            // Bottom-right half of quad from diagram
+            // If area of triangle smaller than epsilon then don't bother rendering it.
+            if (MathUtil.TriangleArea(successorAdjacentNewPoint, successorRemainingPoint.P,
+                predecessorRemainingPoint.P) > TriangleAreaEpsilon)
+            {
+                trianglesAfterCut.Add(successorAdjacentNewPoint);
+                trianglesAfterCut.Add(successorRemainingPoint.P);
+                trianglesAfterCut.Add(predecessorRemainingPoint.P);
+            }
 
             // TODO: Is there any way to pick a 'correct' order from here? Probably, given that we know the plane normal.
             _cutEdgePointA = predecessorAdjacentNewPoint;
             _cutEdgePointB = successorAdjacentNewPoint;
 
             WasCut = true;
+
+            TrianglesAfterCut = trianglesAfterCut;
         }
         else if (removedCount == 2)
         {
@@ -172,11 +189,16 @@ internal class CutTriangle
             // New triangle is (PNP, RP, SNP).
             // Importantly, this triangle is guaranteed to have the same direction (CW vs. CCW) as the original triangle.
 
-            TrianglesAfterCut = new Vector3[]
+            // If area of triangle smaller than epsilon then don't bother rendering it.
+            if (MathUtil.TriangleArea(predecessorNewPoint, remainingPoint.P, sucessorNewPoint) > TriangleAreaEpsilon)
+            {
+                TrianglesAfterCut = new Vector3[]
                 {
                     // Bottom tip of triangle in diagram.
                     predecessorNewPoint, remainingPoint.P, sucessorNewPoint
                 };
+            }
+
             // TODO: Is there any way to pick a 'correct' order from here? Probably, given that we know the plane normal.
             _cutEdgePointA = predecessorNewPoint;
             _cutEdgePointB = sucessorNewPoint;

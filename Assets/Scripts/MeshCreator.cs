@@ -9,6 +9,20 @@ public class MeshCreator : MonoBehaviour
     private Vector3 _slicePlaneB = new Vector3(0.5f, 1f, 1f);
     private Vector3 _slicePlaneC = new Vector3(1.5f, 0f, 0f);
 
+    private Vector3[] _slicePlane2 = new Vector3[]
+    {
+        new Vector3(2f, 0.9f, 0.5f),
+        new Vector3(2.6f, 0.2f, 0.1f),
+        new Vector3(2.9f, 0.1f, 0.9f)
+    };
+
+    private Vector3[] _slicePlane3 = new Vector3[]
+    {
+        new Vector3(1f, 1f, 0f),
+        new Vector3(2f, 1f, 0f),
+        new Vector3(0.5f, 0f, 1f)
+    };
+
     void Start()
     {
         // Create box
@@ -18,6 +32,14 @@ public class MeshCreator : MonoBehaviour
         Plane cutPlane = new Plane(_slicePlaneA, _slicePlaneB, _slicePlaneC);
         mesh = MeshCutter.CutMesh(mesh, cutPlane);
 
+        // cut again!
+        Plane cutPlane2 = new Plane(_slicePlane2[0], _slicePlane2[1], _slicePlane2[2]);
+        mesh = MeshCutter.CutMesh(mesh, cutPlane2);
+
+        // cut again!!
+        Plane cutPlane3 = new Plane(_slicePlane3[0], _slicePlane3[1], _slicePlane3[2]);
+        //mesh = MeshCutter.CutMesh(mesh, cutPlane3);
+
         GetComponent<MeshFilter>().mesh = mesh;
     }
 
@@ -26,6 +48,14 @@ public class MeshCreator : MonoBehaviour
         Debug.DrawLine(_slicePlaneA, _slicePlaneB, Color.red);
         Debug.DrawLine(_slicePlaneB, _slicePlaneC, Color.red);
         Debug.DrawLine(_slicePlaneC, _slicePlaneA, Color.red);
+
+        Debug.DrawLine(_slicePlane2[0], _slicePlane2[1], Color.red);
+        Debug.DrawLine(_slicePlane2[1], _slicePlane2[2], Color.red);
+        Debug.DrawLine(_slicePlane2[2], _slicePlane2[0], Color.red);
+
+        Debug.DrawLine(_slicePlane3[0], _slicePlane3[1], Color.red);
+        Debug.DrawLine(_slicePlane3[1], _slicePlane3[2], Color.red);
+        Debug.DrawLine(_slicePlane3[2], _slicePlane3[0], Color.red);
     }
 
     private static Mesh CreateBoxMesh(int width, int height, int depth)

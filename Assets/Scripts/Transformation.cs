@@ -13,7 +13,10 @@ public class Transformation
     public Transformation(Plane plane)
     {
         // Normal faces towards you when you can read vertices clockwise!!!
-        _planeOrigin = Mathf.Abs(plane.distance) * plane.normal;
+        // I don't fully grok why we use the negation of the product here... I
+        // think unity might just have the opposite notion of the 'facing' of
+        // a plane to mine.
+        _planeOrigin = plane.distance * (-plane.normal);
 
         _xAxis = GetOrthogonal(plane.normal).normalized;
         //_xAxis = (a - _planeOrigin).normalized; // TODO: use a more robust algorithm to pick this vector. This will break if triA is also the plane origin.
